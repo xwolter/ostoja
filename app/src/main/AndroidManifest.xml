@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Ikony serwisów, sprawdzanie wycieków (k-anonimowość) i szyfrowana synchronizacja z własnym komputerem w sieci Wi‑Fi -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Synchronizacja z komputerem w sieci lokalnej (usługa „połączone urządzenie”) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Widżety kodów odświeżają się dokładnie na granicy 30-sekundowego okna -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+
+    <!-- Przycisk „Otwórz Google / Microsoft Authenticator” na ekranie przenoszenia kodów 2FA. -->
+    <queries>
+        <package android:name="com.google.android.apps.authenticator2" />
+        <package android:name="com.azure.authenticator" />
+    </queries>
+
+    <application
+        android:name=".OstojaApp"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_rules"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Ostoja.Splash">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="uiMode|orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|density|fontScale"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="pl.wolter.ostoja.SCAN" />
+                <action android:name="pl.wolter.ostoja.NEW" />
+                <action android:name="pl.wolter.ostoja.CODES" />
+                <action android:name="pl.wolter.ostoja.SEARCH" />
+                <action android:name="pl.wolter.ostoja.GEN" />
+                <action android:name="pl.wolter.ostoja.ISSUES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- Linki otpauth:// z przeglądarki i innych aplikacji -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="otpauth" />
+                <data android:scheme="otpauth-migration" />
+            </intent-filter>
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
+        </activity>
+
+        <activity
+            android:name=".widget.CodeWidgetConfigActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Ostoja">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".autofill.AutofillAuthActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.Ostoja.Translucent" />
+
+        <!-- Widżety -->
+        <receiver android:name=".widget.CodeWidget" android:exported="false" android:label="@string/w_code">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_code_info" />
+        </receiver>
+        <receiver android:name=".widget.CodesWidget" android:exported="false" android:label="@string/w_codes">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_codes_info" />
+        </receiver>
+        <receiver android:name=".widget.QuickWidget" android:exported="false" android:label="@string/w_quick">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_quick_info" />
+        </receiver>
+        <receiver android:name=".widget.SecurityWidget" android:exported="false" android:label="@string/w_security">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_security_info" />
+        </receiver>
+        <receiver android:name=".widget.ScanWidget" android:exported="false" android:label="@string/w_scan">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_scan_info" />
+        </receiver>
+        <receiver android:name=".widget.ActionReceiver" android:exported="false" />
+        <receiver android:name=".notify.PinActionReceiver" android:exported="false" />
+        <receiver android:name=".widget.BootReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Kod przypięty do powiadomień / ekranu blokady (Live Update) -->
+        <service
+            android:name=".notify.PinService"
+            android:exported="false"
+            android:foregroundServiceType="shortService" />
+
+        <!-- Stałe połączenie z komputerem: prośby logowania i zmiany sejfu od razu -->
+        <service
+            android:name=".sync.LinkService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+        <receiver android:name=".sync.RequestReceiver" android:exported="false" />
+
+        <service
+            android:name=".autofill.OstojaAutofillService"
+            android:exported="true"
+            android:label="@string/autofill_label"
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.autofill.AutofillService" />
+            </intent-filter>
+            <meta-data android:name="android.autofill" android:resource="@xml/autofill_service" />
+        </service>
+
+        <service
+            android:name=".tile.CodesTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_stat"
+            android:label="@string/tile_codes"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

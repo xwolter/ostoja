@@ -1,0 +1,23 @@
+{
+  "name": "ostoja-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Strona projektu Ostoja: menedżer haseł i kodów 2FA bez chmury.",
+  "author": "xwolter",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "npx serve out"
+  },
+  "dependencies": {
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.6.0"
+  }
+}

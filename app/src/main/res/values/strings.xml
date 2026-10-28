@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Ostoja</string>
+    <string name="w_code">Kod 2FA</string>
+    <string name="w_scan">Skanuj kod QR</string>
+    <string name="w_scan_desc">Kafel w kolorze akcentu - od razu otwiera skaner.</string>
+    <string name="w_code_desc">Jeden kod z odliczaniem. Dotknij, aby skopiować.</string>
+    <string name="w_codes">Ostoja · kody</string>
+    <string name="w_codes_desc">Trzy konta z ikonami i odliczaniem. Dotknij wiersza, aby skopiować.</string>
+    <string name="w_quick">Szybki dostęp</string>
+    <string name="w_quick_desc">Szukaj w sejfie, skanuj kod, wygeneruj hasło.</string>
+    <string name="w_security">Kondycja sejfu</string>
+    <string name="w_security_desc">Wynik sejfu, hasła do poprawy i wycieki.</string>
+    <string name="tile_codes">Kody 2FA</string>
+    <string name="autofill_label">Ostoja</string>
+    <string name="sc_scan">Skanuj kod QR</string>
+    <string name="sc_new">Nowe hasło</string>
+    <string name="sc_codes">Kody 2FA</string>
+    <string name="sc_gen">Generator haseł</string>
+</resources>

@@ -1,0 +1,13 @@
+<resources>
+    <color name="bg">#F6F6F6</color>
+    <color name="accent">#3E91FF</color>
+    <color name="w_bg">#FFFFFF</color>
+    <color name="w_glass">#E0FFFFFF</color>
+    <color name="w_glass_border">#0F000000</color>
+    <color name="w_field">#F1F1F3</color>
+    <color name="w_logo">#F1F1F3</color>
+    <color name="w_track">#17000000</color>
+    <color name="w_sep">#12000000</color>
+    <color name="w_text">#1A1A1A</color>
+    <color name="w_text2">#6E6E73</color>
+</resources>

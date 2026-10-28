@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Komputer w sieci domowej nie ma certyfikatu HTTPS, więc połączenie z nim idzie po zwykłym HTTP.
+     Każda wiadomość jest jednak szyfrowana i uwierzytelniana AES-256-GCM kluczem z parowania (sync/Protocol.kt),
+     a pozostałe połączenia (ikony, Have I Been Pwned) używają wyłącznie HTTPS. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

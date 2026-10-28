@@ -1,0 +1,50 @@
+name: Wydanie
+
+# Znacznik v* (np. v1.2.7) buduje instalator Windows i APK i dołącza je do wydania na GitHubie.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Testy
+        run: ./gradlew.bat :shared:test --no-daemon
+      # Stały klucz podpisu APK z sekretu repozytorium. Bez niego wydanie dostaje tylko instalator Windows,
+      # bo APK podpisany losowym kluczem nie zainstalowałby się jako aktualizacja.
+      - name: Klucz podpisu APK
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.OSTOJA_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ostoja.keystore"
+            echo "OSTOJA_KEYSTORE=$RUNNER_TEMP/ostoja.keystore" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Brak sekretu OSTOJA_KEYSTORE_B64 - APK nie trafi do wydania"
+          fi
+      - name: Instalator Windows i APK
+        env:
+          OSTOJA_KEYSTORE_PASSWORD: ${{ secrets.OSTOJA_KEYSTORE_PASSWORD }}
+        run: ./gradlew.bat :desktop:packageMsi :app:assembleRelease --no-daemon
+      - name: Pliki o stałych nazwach
+        shell: bash
+        run: |
+          mkdir dist
+          cp desktop/build/compose/binaries/main/msi/*.msi dist/Ostoja-Windows.msi
+          if [ -n "$OSTOJA_KEYSTORE" ]; then cp app/build/outputs/apk/release/app-release.apk dist/Ostoja.apk; fi
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Ostoja ${{ github.ref_name }}
+          body_path: .github/RELEASE.md
+          files: dist/*

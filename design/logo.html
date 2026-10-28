@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;background:transparent}
+  .wrap{width:1600px;height:560px;display:flex;align-items:center;gap:56px;padding:0 80px;box-sizing:border-box;
+        font-family:"Segoe UI Variable Display","Segoe UI",Roboto,sans-serif;color:#141821}
+  .wrap.dark{background:#0E1014;color:#F4F6FA}
+  img{width:360px;height:360px;filter:drop-shadow(0 18px 36px rgba(30,90,214,.28))}
+  .name{font-size:188px;font-weight:700;letter-spacing:-6px;line-height:1}
+  .name span{color:#3E91FF}
+  .tag{font-size:40px;font-weight:400;opacity:.62;margin-top:18px;letter-spacing:.2px}
+</style></head>
+<body>
+<div class="wrap" id="w">
+  <img src="icon.svg" alt="">
+  <div><div class="name">Osto<span>ja</span></div><div class="tag">Sejf haseł i kody 2FA w jednym miejscu</div></div>
+</div>
+<script>if(location.hash==='#dark')document.getElementById('w').classList.add('dark')</script>
+</body></html>

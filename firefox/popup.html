@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ostoja</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <img class="logo" src="icons/icon-48.png" alt="">
+    <div class="who">
+      <b>Ostoja</b>
+      <span id="conn"><i class="dot"></i><em>Łączę…</em></span>
+    </div>
+    <button id="add" class="icon" title="Dodaj hasło" hidden>
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button id="menu" class="icon" title="Więcej" hidden>
+      <svg viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18.5" cy="12" r="1.6"/></svg>
+    </button>
+    <div id="menuBox" class="menu" hidden>
+      <button id="refresh">Odśwież listę</button>
+      <button id="unpair" class="danger">Odłącz od aplikacji</button>
+    </div>
+  </header>
+
+  <main id="view"></main>
+
+  <div id="toast"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

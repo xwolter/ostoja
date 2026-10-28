@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/wbg_glass"
+    android:orientation="vertical" android:paddingTop="16dp" android:paddingBottom="8dp">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingBottom="6dp">
+        <FrameLayout android:layout_width="26dp" android:layout_height="26dp">
+            <ImageView android:id="@+id/brand_bg" android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/w_circle" android:tint="#3E91FF" />
+            <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="center" android:src="@drawable/w_padlock" />
+        </FrameLayout>
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp"
+            android:text="Ostoja · kody" android:textColor="@color/w_text" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
+        <Chronometer android:id="@+id/timer" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum" android:textColor="@color/w_text2" android:textSize="13sp" />
+        <ProgressBar android:id="@+id/ring" style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="20dp" android:layout_height="20dp" android:layout_marginStart="8dp"
+            android:indeterminate="false" android:max="1000" android:progress="700"
+            android:progressDrawable="@drawable/w_ring" android:progressTint="#3E91FF" />
+    </LinearLayout>
+
+    <TextView android:id="@+id/empty" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:gravity="center" android:paddingStart="20dp" android:paddingEnd="20dp"
+        android:text="Brak kont 2FA. Dotknij, aby zeskanować kod QR." android:textColor="@color/w_text2" android:textSize="13sp" android:visibility="gone" />
+
+    <LinearLayout android:id="@+id/list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical">
+        <LinearLayout android:id="@+id/r0" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="20dp" android:paddingEnd="20dp">
+            <FrameLayout android:layout_width="36dp" android:layout_height="36dp">
+                <ImageView android:id="@+id/r0_bg" android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:src="@drawable/w_circle" android:tint="@color/w_logo" />
+                <ImageView android:id="@+id/r0_icon" android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" />
+                <TextView android:id="@+id/r0_letter" android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:gravity="center" android:textColor="#1A73E8" android:textSize="13sp" android:fontFamily="sans-serif-medium" android:text="G" />
+            </FrameLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginStart="12dp" android:orientation="vertical">
+                <TextView android:id="@+id/r0_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:maxLines="1" android:ellipsize="end" android:text="Google" android:textColor="@color/w_text" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                <TextView android:id="@+id/r0_email" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:maxLines="1" android:ellipsize="end" android:text="anna.nowak@gmail.com" android:textColor="@color/w_text2" android:textSize="12.5sp" />
+            </LinearLayout>
+            <TextView android:id="@+id/r0_code" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-medium" android:fontFeatureSettings="tnum" android:maxLines="1" android:text="482 913"
+                android:textColor="#3E91FF" android:textSize="22sp" />
+        </LinearLayout>
+        <ImageView android:id="@+id/r0_sep" android:layout_width="match_parent" android:layout_height="1dp"
+            android:layout_marginStart="68dp" android:layout_marginEnd="20dp" android:src="@drawable/wbg_sep" android:scaleType="fitXY" />
+        <LinearLayout android:id="@+id/r1" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="20dp" android:paddingEnd="20dp">
+            <FrameLayout android:layout_width="36dp" android:layout_height="36dp">
+                <ImageView android:id="@+id/r1_bg" android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:src="@drawable/w_circle" android:tint="@color/w_logo" />
+                <ImageView android:id="@+id/r1_icon" android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" />
+                <TextView android:id="@+id/r1_letter" android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:gravity="center" android:textColor="#1A73E8" android:textSize="13sp" android:fontFamily="sans-serif-medium" android:text="G" />
+            </FrameLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginStart="12dp" android:orientation="vertical">
+                <TextView android:id="@+id/r1_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:maxLines="1" android:ellipsize="end" android:text="Microsoft" android:textColor="@color/w_text" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                <TextView android:id="@+id/r1_email" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:maxLines="1" android:ellipsize="end" android:text="anna.nowak@outlook.com" android:textColor="@color/w_text2" android:textSize="12.5sp" />
+            </LinearLayout>
+            <TextView android:id="@+id/r1_code" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-medium" android:fontFeatureSettings="tnum" android:maxLines="1" android:text="193 228"
+                android:textColor="#3E91FF" android:textSize="22sp" />
+        </LinearLayout>
+        <ImageView android:id="@+id/r1_sep" android:layout_width="match_parent" android:layout_height="1dp"
+            android:layout_marginStart="68dp" android:layout_marginEnd="20dp" android:src="@drawable/wbg_sep" android:scaleType="fitXY" />
+        <LinearLayout android:id="@+id/r2" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="20dp" android:paddingEnd="20dp">
+            <FrameLayout android:layout_width="36dp" android:layout_height="36dp">
+                <ImageView android:id="@+id/r2_bg" android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:src="@drawable/w_circle" android:tint="@color/w_logo" />
+                <ImageView android:id="@+id/r2_icon" android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" />
+                <TextView android:id="@+id/r2_letter" android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:gravity="center" android:textColor="#1A73E8" android:textSize="13sp" android:fontFamily="sans-serif-medium" android:text="G" />
+            </FrameLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginStart="12dp" android:orientation="vertical">
+                <TextView android:id="@+id/r2_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:maxLines="1" android:ellipsize="end" android:text="Discord" android:textColor="@color/w_text" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                <TextView android:id="@+id/r2_email" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:maxLines="1" android:ellipsize="end" android:text="anna_nowak" android:textColor="@color/w_text2" android:textSize="12.5sp" />
+            </LinearLayout>
+            <TextView android:id="@+id/r2_code" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-medium" android:fontFeatureSettings="tnum" android:maxLines="1" android:text="705 341"
+                android:textColor="#3E91FF" android:textSize="22sp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

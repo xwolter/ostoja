@@ -1,0 +1,14 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:shortcutId="scan" android:enabled="true" android:icon="@drawable/sc_scan"
+        android:shortcutShortLabel="@string/sc_scan">
+        <intent android:action="pl.wolter.ostoja.SCAN" android:targetPackage="pl.wolter.ostoja" android:targetClass="pl.wolter.ostoja.MainActivity"/>
+    </shortcut>
+    <shortcut android:shortcutId="new" android:enabled="true" android:icon="@drawable/sc_new"
+        android:shortcutShortLabel="@string/sc_new">
+        <intent android:action="pl.wolter.ostoja.NEW" android:targetPackage="pl.wolter.ostoja" android:targetClass="pl.wolter.ostoja.MainActivity"/>
+    </shortcut>
+    <shortcut android:shortcutId="codes" android:enabled="true" android:icon="@drawable/sc_codes"
+        android:shortcutShortLabel="@string/sc_codes">
+        <intent android:action="pl.wolter.ostoja.CODES" android:targetPackage="pl.wolter.ostoja" android:targetClass="pl.wolter.ostoja.MainActivity"/>
+    </shortcut>
+</shortcuts>

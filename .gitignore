@@ -1,0 +1,10 @@
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+.kotlin/
+# gotowe pliki idą do GitHub Releases, nie do repozytorium
+*.msi
+*.apk
+*.xpi

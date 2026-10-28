@@ -1,0 +1,10 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/widget_security"
+    android:previewLayout="@layout/widget_security"
+    android:minWidth="250dp" android:minHeight="80dp"
+    android:minResizeWidth="250dp" android:minResizeHeight="80dp"
+    android:targetCellWidth="4" android:targetCellHeight="1"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen|keyguard"
+    android:description="@string/w_security_desc" />
