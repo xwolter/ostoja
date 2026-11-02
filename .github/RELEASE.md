@@ -2,13 +2,11 @@
 
 | Plik | Dla | Wersja |
 |---|---|---|
-| `Ostoja-Windows.msi` | Windows 10/11 | 1.3.0 |
-| `Ostoja.apk` | Android 9+ | 1.2.0 |
+| `Ostoja.apk` | Android 9+ | 1.2.1 |
+| `Ostoja-Windows.msi` | Windows 10/11 | 1.3.0 (bez zmian) |
 
-Rozszerzenie do Firefoksa (1.1.8): plik `Ostoja-Firefox.xpi` podpisany przez Mozillę, jeśli jest w tym wydaniu, albo źródła w `firefox/`.
+Rozszerzenie do Firefoksa (1.1.8): bez zmian.
 
 ## Co nowego
-- **Nowe logo** - pierścień jak odliczanie kodu 2FA i dziurka od klucza. Nowa ikona aplikacji (także w wersji jednokolorowej do motywu ikon One UI), powiadomień, instalatora i rozszerzenia.
-- **Stabilność.** Usługi działające w tle (połączenie z komputerem, przypięty kod 2FA, widżety, autouzupełnianie) nie zamykają już aplikacji przy błędzie. Gdyby Ostoja jednak się zamknęła, przy następnym otwarciu pokaże szczegóły do skopiowania (Ustawienia → Dziennik błędów). Nic nie jest wysyłane samo.
-- **Autouzupełnianie bez zbędnego potwierdzenia.** Wybrane hasło wpisuje się od razu. Odcisk palca tylko wtedy, gdy masz włączoną blokadę i sejf był dawno nieużywany.
-- **Czytelne podpowiedzi haseł** w innych aplikacjach - własne tło i kolory w jasnym i ciemnym motywie.
+- **Przenoszenie kodów z Google Authenticator.** Po wybraniu zdjęć albo zeskanowaniu kodów eksportu znalezione konta od razu pokazują się na górze ekranu z przyciskiem „Dodaj”. Wcześniej lista pojawiała się poza widokiem i wyglądało, jakby nic się nie stało.
+- Dokładniejszy komunikat po odczycie zdjęć: ile nowych kont znaleziono albo że już są w Ostoi.

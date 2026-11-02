@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -81,6 +83,7 @@ fun ImportOtpScreen(nav: Nav, vault: VaultData) {
     // seria eksportu → (liczba kodów, odczytane numery)
     val batches = remember { mutableStateMapOf<Long, Pair<Int, Set<Int>>>() }
     var scanning by remember { mutableStateOf(false) }
+    val list = rememberLazyListState()
 
     val have = remember(vault.otps) { vault.otps.map { it.secret }.toSet() }
 
@@ -102,9 +105,21 @@ fun ImportOtpScreen(nav: Nav, vault: VaultData) {
 
     val photos = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(20)) { uris ->
         if (uris.isEmpty()) return@rememberLauncherForActivityResult
+        val before = found.size
         var ok = 0
-        uris.forEach { u -> decodeQrFromImage(ctx, u)?.let { take(it); ok++ } }
-        toaster.show(if (ok == 0) "Na zdjęciach nie ma kodów QR" else "Odczytano " + countLabel(ok, "kod", "kody", "kodów") + " ze zdjęć")
+        var last = ""
+        uris.forEach { u -> decodeQrFromImage(ctx, u)?.let { last = take(it); ok++ } }
+        val added = found.drop(before)
+        val fresh = added.count { it.secret !in have }
+        toaster.show(
+            when {
+                ok == 0 -> "Na zdjęciach nie ma kodów QR"
+                added.isEmpty() && found.isEmpty() -> last
+                added.isEmpty() -> "Te konta już są na liście"
+                fresh == 0 -> "Te konta już są w Ostoi"
+                else -> "Znaleziono " + countLabel(fresh, "konto", "konta", "kont") + " - dotknij „Dodaj”"
+            }
+        )
     }
 
     fun open(url: String) {
@@ -133,10 +148,13 @@ fun ImportOtpScreen(nav: Nav, vault: VaultData) {
         return
     }
 
+    // Nowe konta pojawiają się na górze strony - przewiń do nich, żeby nie zostały poza ekranem.
+    LaunchedEffect(found.size) { if (found.isNotEmpty()) list.animateScrollToItem(0) }
+
     val fresh = found.filter { it.secret !in have }
     val missing = batches.values.sumOf { (size, seen) -> size - seen.size }
 
-    OneUiPage(title = "Przenieś kody 2FA", subtitle = "Z Google i Microsoft Authenticator", onBack = { nav.pop() }, bottomPadding = 40.dp) {
+    OneUiPage(title = "Przenieś kody 2FA", subtitle = "Z Google i Microsoft Authenticator", state = list, onBack = { nav.pop() }, bottomPadding = 40.dp) {
         if (found.isNotEmpty()) item(key = "found") {
             SectionLabel("Znalezione konta")
             Group {

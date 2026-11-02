@@ -13,8 +13,8 @@ android {
         applicationId = "pl.wolter.ostoja"
         minSdk = 28
         targetSdk = 35
-        versionCode = 8
-        versionName = "1.2.0"
+        versionCode = 9
+        versionName = "1.2.1"
     }
 
     // Wydania podpisuje stały klucz (ten sam na komputerze autora i w GitHub Actions), więc każda nowa wersja
