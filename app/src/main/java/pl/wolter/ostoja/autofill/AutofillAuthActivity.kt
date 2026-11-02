@@ -44,7 +44,6 @@ import pl.wolter.ostoja.ui.theme.T
 /** Odblokowanie przed wypełnieniem pola (biometria) i - dla „Szukaj w Ostoi…” - wybór wpisu. */
 class AutofillAuthActivity : FragmentActivity() {
     private var picking by mutableStateOf(false)
-    private var asking by mutableStateOf<Login?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +54,6 @@ class AutofillAuthActivity : FragmentActivity() {
         setContent {
             val s by app.settings.flow.collectAsState()
             if (picking) OstojaTheme(s) { Picker(intent.getStringExtra(EXTRA_DOMAIN).orEmpty()) { finishWith(it) } }
-            asking?.let { l -> OstojaTheme(s) { ConfirmApp(l, intent.getStringExtra(EXTRA_APP).orEmpty(), { finishWith(l) }) { finish() } } }
         }
 
         val proceed = {
@@ -63,8 +61,6 @@ class AutofillAuthActivity : FragmentActivity() {
             when {
                 loginId == null -> picking = true
                 l == null -> finish()
-                // Hasło dla aplikacji (nie przeglądarki): pokazujemy, który pakiet o nie prosi.
-                intent.getStringExtra(EXTRA_APP) != null -> asking = l
                 else -> finishWith(l)
             }
         }
@@ -97,7 +93,6 @@ class AutofillAuthActivity : FragmentActivity() {
         const val EXTRA_USER = "user"
         const val EXTRA_PASS = "pass"
         const val EXTRA_DOMAIN = "domain"
-        const val EXTRA_APP = "app"
     }
 }
 
@@ -122,27 +117,6 @@ private fun Picker(domain: String, onPick: (Login) -> Unit) {
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-/** „Wpisać hasło do Allegro w aplikacji com.example.app?” - chroni przed aplikacją podszywającą się nazwą pakietu. */
-@androidx.compose.runtime.Composable
-private fun ConfirmApp(l: Login, pkg: String, onYes: () -> Unit, onNo: () -> Unit) {
-    Box(Modifier.fillMaxSize().background(C.bg), contentAlignment = Alignment.Center) {
-        Column(Modifier.padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Avatar(l.title, l.url, size = 60.dp, type = l.type)
-            Text("Wpisać hasło do ${l.title}?", style = T.title, color = C.text, modifier = Modifier.padding(top = 18.dp))
-            Text(
-                "Prosi o nie aplikacja $pkg. Upewnij się, że to oficjalna aplikacja ${l.title}, a nie podróbka.",
-                style = T.sub, color = C.text2, modifier = Modifier.padding(top = 8.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            )
-            Row(Modifier.padding(top = 26.dp)) {
-                androidx.compose.material3.TextButton(onClick = onNo) { Text("Anuluj", color = C.text) }
-                androidx.compose.foundation.layout.Spacer(Modifier.padding(horizontal = 8.dp))
-                androidx.compose.material3.Button(onClick = onYes) { Text("Wpisz") }
             }
         }
     }

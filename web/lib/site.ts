@@ -2,7 +2,7 @@ export const site = {
   name: 'Ostoja',
   author: 'xwolter',
   repo: 'https://github.com/xwolter/ostoja',
-  versions: { windows: '1.2.9', android: '1.1.0', firefox: '1.1.7' },
+  versions: { windows: '1.3.0', android: '1.2.0', firefox: '1.1.8' },
 };
 
 /** Pliki z najnowszego wydania na GitHubie - nazwy bez numeru wersji, więc linki się nie starzeją. */

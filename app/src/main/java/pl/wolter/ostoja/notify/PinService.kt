@@ -45,14 +45,18 @@ class PinService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) { stop(); return START_NOT_STICKY }
-        val id = intent?.getStringExtra(EXTRA_ID) ?: run { stop(); return START_NOT_STICKY }
-        val acc = app.vault.value.otp(id) ?: run { stop(); return START_NOT_STICKY }
+        val id = intent?.getStringExtra(EXTRA_ID)
+        val acc = id?.let { app.vault.value.otp(it) }
         otpId = id
-        source = intent.getStringExtra(EXTRA_SOURCE) ?: "Kod 2FA"
-        ServiceCompat.startForeground(
-            this, NOTIF_ID, build(acc),
-            if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE else 0,
-        )
+        source = intent?.getStringExtra(EXTRA_SOURCE) ?: "Kod 2FA"
+        // Najpierw powiadomienie (wymóg startForegroundService), dopiero potem ewentualne zatrzymanie.
+        val ok = runCatching {
+            ServiceCompat.startForeground(
+                this, NOTIF_ID, if (acc != null) build(acc) else placeholder(),
+                if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE else 0,
+            )
+        }.onFailure { pl.wolter.ostoja.CrashLog.record("przypięty kod - start", it) }.isSuccess
+        if (!ok || id == null || acc == null) { stop(); return START_NOT_STICKY }
         job?.cancel()
         job = scope.launch {
             val until = System.currentTimeMillis() + LIFETIME_MS
@@ -122,9 +126,12 @@ class PinService : Service() {
         return b.build()
     }
 
+    private fun placeholder(): Notification = NotificationCompat.Builder(this, OstojaApp.CH_CODES)
+        .setSmallIcon(R.drawable.ic_stat).setContentTitle("Kod 2FA").setSilent(true).build()
+
     private fun stop() {
         job?.cancel()
-        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        runCatching { ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE) }
         stopSelf()
     }
 
@@ -146,9 +153,11 @@ class PinService : Service() {
         const val ACTION_COPY = "pl.wolter.ostoja.pin.COPY"
 
         fun start(ctx: Context, otpId: String, source: String? = null) {
-            ContextCompat.startForegroundService(
-                ctx, Intent(ctx, PinService::class.java).putExtra(EXTRA_ID, otpId).putExtra(EXTRA_SOURCE, source),
-            )
+            pl.wolter.ostoja.CrashLog.guard("przypięty kod - uruchomienie", Unit) {
+                ContextCompat.startForegroundService(
+                    ctx, Intent(ctx, PinService::class.java).putExtra(EXTRA_ID, otpId).putExtra(EXTRA_SOURCE, source),
+                )
+            }
         }
     }
 }
@@ -157,7 +166,9 @@ class PinActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != PinService.ACTION_COPY) return
         val id = intent.data?.lastPathSegment ?: return
-        val a = context.app.vault.value.otp(id) ?: return
-        Clip.copy(context, "Kod 2FA · ${a.title}", Otp.code(a), toast = true)
+        pl.wolter.ostoja.CrashLog.guard("przypięty kod - kopiuj", Unit) {
+            val a = context.app.vault.value.otp(id) ?: return
+            Clip.copy(context, "Kod 2FA · ${a.title}", Otp.code(a), toast = true)
+        }
     }
 }

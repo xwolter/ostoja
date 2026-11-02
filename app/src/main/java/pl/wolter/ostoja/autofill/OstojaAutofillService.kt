@@ -46,7 +46,7 @@ object Parser {
         var userValue: String? = null
         var passValue: String? = null
 
-        fun visit(n: AssistStructure.ViewNode) {
+        fun check(n: AssistStructure.ViewNode) {
             n.webDomain?.takeIf { it.isNotBlank() }?.let { domain = it }
             val id = n.autofillId
             if (id != null && n.autofillType == View.AUTOFILL_TYPE_TEXT && n.visibility == View.VISIBLE) {
@@ -71,10 +71,17 @@ object Parser {
                 if (isPass) { pass += id; if (!value.isNullOrEmpty()) passValue = value }
                 else if (isUser) { user += id; if (!value.isNullOrEmpty()) userValue = value }
             }
-            for (i in 0 until n.childCount) visit(n.getChildAt(i))
         }
 
-        for (i in 0 until structure.windowNodeCount) visit(structure.getWindowNodeAt(i).rootViewNode)
+        // Bez rekurencji: głębokie drzewo strony WWW nie przepełni stosu. Limit węzłów chroni przed bardzo dużymi stronami.
+        val stack = ArrayDeque<AssistStructure.ViewNode>()
+        for (i in 0 until structure.windowNodeCount) structure.getWindowNodeAt(i)?.rootViewNode?.let { stack.addLast(it) }
+        var seen = 0
+        while (stack.isNotEmpty() && seen++ < 20_000) {
+            val n = stack.removeLast()
+            check(n)
+            for (i in n.childCount - 1 downTo 0) n.getChildAt(i)?.let { stack.addLast(it) }
+        }
         // Pole tekstowe tuż przed hasłem, którego nie rozpoznaliśmy, i tak jest zwykle loginem - pomijamy dla prostoty.
         return Fields(user.distinct(), pass.distinct(), domain, structure.activityComponent?.packageName ?: "", userValue, passValue)
     }
@@ -122,15 +129,24 @@ class OstojaAutofillService : AutofillService() {
 
     @Suppress("DEPRECATION")
     override fun onFillRequest(request: FillRequest, cancellationSignal: CancellationSignal, callback: FillCallback) {
+        try {
+            fill(request, callback)
+        } catch (e: Throwable) {
+            pl.wolter.ostoja.CrashLog.record("autouzupełnianie", e)
+            runCatching { callback.onSuccess(null) }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun fill(request: FillRequest, callback: FillCallback) {
         val structure = request.fillContexts.lastOrNull()?.structure ?: return callback.onSuccess(null)
         val f = Parser.parse(structure)
         if (f.packageName == packageName || (f.user.isEmpty() && f.pass.isEmpty())) return callback.onSuccess(null)
 
         val logins = app.vault.value.logins
         val matches = Parser.match(logins, f).take(5)
-        // Aplikację rozpoznajemy tylko po nazwie pakietu, którą może podrobić - wtedy zawsze pytamy, komu dać hasło.
-        val fromApp = Parser.trustedDomain(f) == null
-        val needAuth = AppLock.enabled(this) || fromApp
+        // Odcisk palca tylko wtedy, gdy sejf jest zablokowany (dawno nieużywany). Po świeżym odblokowaniu wpisuje od razu.
+        val needAuth = AppLock.enabled(this) && !AppLock.recentlyUnlocked(this)
         val response = FillResponse.Builder()
         val targets = f.user + f.pass
 
@@ -164,6 +180,15 @@ class OstojaAutofillService : AutofillService() {
     }
 
     override fun onSaveRequest(request: SaveRequest, callback: SaveCallback) {
+        try {
+            save(request, callback)
+        } catch (e: Throwable) {
+            pl.wolter.ostoja.CrashLog.record("zapis hasła z autouzupełniania", e)
+            runCatching { callback.onSuccess() }
+        }
+    }
+
+    private fun save(request: SaveRequest, callback: SaveCallback) {
         val structure = request.fillContexts.lastOrNull()?.structure ?: return callback.onSuccess()
         val f = Parser.parse(structure)
         val pw = f.passValue
@@ -201,8 +226,7 @@ class OstojaAutofillService : AutofillService() {
                     .putExtra(AutofillAuthActivity.EXTRA_LOGIN, loginId)
                     .putParcelableArrayListExtra(AutofillAuthActivity.EXTRA_USER, ArrayList(f.user))
                     .putParcelableArrayListExtra(AutofillAuthActivity.EXTRA_PASS, ArrayList(f.pass))
-                    .putExtra(AutofillAuthActivity.EXTRA_DOMAIN, Parser.trustedDomain(f) ?: f.packageName)
-                    .putExtra(AutofillAuthActivity.EXTRA_APP, if (Parser.trustedDomain(f) == null) f.packageName else null),
+                    .putExtra(AutofillAuthActivity.EXTRA_DOMAIN, Parser.trustedDomain(f) ?: f.packageName),
                 PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_CANCEL_CURRENT,
             ).intentSender
     }

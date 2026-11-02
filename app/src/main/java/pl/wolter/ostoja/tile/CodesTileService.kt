@@ -10,13 +10,14 @@ import pl.wolter.ostoja.app
 
 /** Kafelek w panelu szybkich ustawień: jedno dotknięcie → Kody 2FA. */
 class CodesTileService : TileService() {
-    override fun onStartListening() {
+    override fun onStartListening() = pl.wolter.ostoja.CrashLog.guard("kafelek", Unit) {
         qsTile?.apply {
             state = Tile.STATE_INACTIVE
             val n = app.vault.value.otps.size
             if (Build.VERSION.SDK_INT >= 29) subtitle = if (n == 0) "Brak kont" else "$n"
             updateTile()
         }
+        Unit
     }
 
     override fun onClick() {
@@ -31,6 +32,6 @@ class CodesTileService : TileService() {
                 startActivityAndCollapse(intent)
             }
         }
-        if (isLocked) unlockAndRun { go() } else go()
+        pl.wolter.ostoja.CrashLog.guard("kafelek - otwarcie", Unit) { if (isLocked) unlockAndRun { go() } else go() }
     }
 }

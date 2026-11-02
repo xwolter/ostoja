@@ -314,11 +314,11 @@ object Widgets {
 
 abstract class BaseWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        Widgets.updateAll(context)
+        pl.wolter.ostoja.CrashLog.guard("widżet - aktualizacja", Unit) { Widgets.updateAll(context) }
     }
 
     override fun onDisabled(context: Context) {
-        Widgets.updateCodes(context)
+        pl.wolter.ostoja.CrashLog.guard("widżet - usunięcie", Unit) { Widgets.updateCodes(context) }
     }
 }
 
@@ -337,6 +337,10 @@ class ScanWidget : BaseWidget()
 
 class ActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        pl.wolter.ostoja.CrashLog.guard("widżet - " + intent.action?.substringAfterLast('.'), Unit) { handle(context, intent) }
+    }
+
+    private fun handle(context: Context, intent: Intent) {
         when (intent.action) {
             Widgets.ACTION_TICK -> Widgets.tick(context)
             Widgets.ACTION_COPY -> {
@@ -355,7 +359,7 @@ class ActionReceiver : BroadcastReceiver() {
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        Widgets.updateAll(context)
-        pl.wolter.ostoja.sync.LinkService.start(context)
+        pl.wolter.ostoja.CrashLog.guard("start telefonu - widżety", Unit) { Widgets.updateAll(context) }
+        pl.wolter.ostoja.CrashLog.guard("start telefonu - połączenie", Unit) { pl.wolter.ostoja.sync.LinkService.start(context) }
     }
 }

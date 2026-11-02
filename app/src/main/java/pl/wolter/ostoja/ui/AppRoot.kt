@@ -126,6 +126,24 @@ fun AppRoot(activity: MainActivity) {
             }
         }
 
+        // Po zamknięciu z powodu błędu: szczegóły do skopiowania (nic nie jest wysyłane samo).
+        var crashSeen by remember { mutableStateOf(!pl.wolter.ostoja.CrashLog.unseenCrash()) }
+        if (!crashSeen) {
+            val ctx = androidx.compose.ui.platform.LocalContext.current
+            OneDialog(
+                title = "Ostoja zamknęła się z powodu błędu",
+                text = "Przepraszamy. Szczegóły błędu są zapisane tylko na tym telefonie. Skopiuj je i prześlij autorowi - pomogą go naprawić. Twoje hasła nie trafiają do tego zapisu.",
+                confirm = "Kopiuj szczegóły",
+                dismiss = "Zamknij",
+                onConfirm = {
+                    pl.wolter.ostoja.CrashLog.copy(ctx)
+                    pl.wolter.ostoja.CrashLog.markSeen(); crashSeen = true
+                    toaster.show("Skopiowano szczegóły błędu")
+                },
+                onDismiss = { pl.wolter.ostoja.CrashLog.markSeen(); crashSeen = true },
+            )
+        }
+
         nav.importBatch?.let { batch ->
             OneDialog(
                 title = "Zaimportować ${countLabel(batch.size, "konto", "konta", "kont")}?",

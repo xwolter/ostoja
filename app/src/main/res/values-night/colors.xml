@@ -9,4 +9,8 @@
     <color name="w_sep">#14FFFFFF</color>
     <color name="w_text">#FFFFFF</color>
     <color name="w_text2">#A1A1A6</color>
+    <!-- podpowiedzi autouzupełniania -->
+    <color name="af_bg">#1E2026</color>
+    <color name="af_text">#F2F3F5</color>
+    <color name="af_text2">#A1A6B4</color>
 </resources>

@@ -296,6 +296,10 @@ fun SettingsScreen(nav: Nav, vault: VaultData, s: AppSettings) {
         item(key = "about") {
             Spacer(Modifier.height(28.dp))
             Group {
+                SettingRow("Dziennik błędów", if (pl.wolter.ostoja.CrashLog.text().isBlank()) "Brak zapisanych błędów" else "Dotknij, aby skopiować szczegóły dla autora", onClick = {
+                    pl.wolter.ostoja.CrashLog.copy(ctx); toaster.show("Skopiowano dziennik błędów")
+                })
+                Divider()
                 SettingRow("Informacje o aplikacji", "Wersja ${pl.wolter.ostoja.BuildConfig.VERSION_NAME} · xwolter · " + countLabel(vault.logins.size, "wpis", "wpisy", "wpisów") + ", " + countLabel(vault.otps.size, "kod", "kody", "kodów") + " 2FA")
                 Divider()
                 SettingRow("Usuń wszystkie dane", null, titleColor = C.danger, onClick = { wipeAsk = true })

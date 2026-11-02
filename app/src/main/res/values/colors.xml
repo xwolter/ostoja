@@ -10,4 +10,8 @@
     <color name="w_sep">#12000000</color>
     <color name="w_text">#1A1A1A</color>
     <color name="w_text2">#6E6E73</color>
+    <!-- podpowiedzi autouzupełniania -->
+    <color name="af_bg">#FFFFFF</color>
+    <color name="af_text">#16181D</color>
+    <color name="af_text2">#5E6370</color>
 </resources>

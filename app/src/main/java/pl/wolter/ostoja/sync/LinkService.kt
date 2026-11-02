@@ -36,14 +36,19 @@ class LinkService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (!Sync.paired || !Sync.live.value) { stopSelf(); return START_NOT_STICKY }
+        // Usługa uruchomiona przez startForegroundService musi od razu pokazać powiadomienie, nawet jeśli zaraz
+        // się zatrzyma. Inaczej Android zamyka całą aplikację („aplikacja została zamknięta z powodu błędu”).
         val ok = runCatching {
             ServiceCompat.startForeground(
                 this, NOTIF_ID, build(),
                 if (Build.VERSION.SDK_INT >= 29) ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE else 0,
             )
-        }.isSuccess
-        if (!ok) { stopSelf(); return START_NOT_STICKY }
+        }.onFailure { pl.wolter.ostoja.CrashLog.record("połączenie w tle - start", it) }.isSuccess
+        if (!ok || !Sync.paired || !Sync.live.value) {
+            runCatching { ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE) }
+            stopSelf()
+            return START_NOT_STICKY
+        }
         Sync.hold("service", true)
         watcher?.cancel()
         watcher = scope.launch {
@@ -138,7 +143,7 @@ class RequestReceiver : BroadcastReceiver() {
         val inc = Sync.request.value?.takeIf { it.request.id == id } ?: run { RequestNotification.cancel(context); return }
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
-            try { Sync.answer(inc, approve = false, picked = null) } finally { pending.finish() }
+            try { Sync.answer(inc, approve = false, picked = null) } catch (e: Exception) { pl.wolter.ostoja.CrashLog.record("odrzucenie prośby", e) } finally { pending.finish() }
         }
     }
 }

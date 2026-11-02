@@ -2,12 +2,13 @@
 
 | Plik | Dla | Wersja |
 |---|---|---|
-| `Ostoja-Windows.msi` | Windows 10/11 | 1.2.9 |
-| `Ostoja.apk` | Android 9+ | 1.1.0 |
+| `Ostoja-Windows.msi` | Windows 10/11 | 1.3.0 |
+| `Ostoja.apk` | Android 9+ | 1.2.0 |
 
-Rozszerzenie do Firefoksa (1.1.7): plik `Ostoja-Firefox.xpi` podpisany przez Mozillę, jeśli jest w tym wydaniu, albo źródła w `firefox/`.
+Rozszerzenie do Firefoksa (1.1.8): plik `Ostoja-Firefox.xpi` podpisany przez Mozillę, jeśli jest w tym wydaniu, albo źródła w `firefox/`.
 
 ## Co nowego
-- **Przenoszenie kodów 2FA z Google Authenticatora.** Kody → menu → „Przenieś z innej aplikacji” (albo Ustawienia → „Przenieś kody 2FA”). Eksport „Przenieś konta” podzielony na kilka kodów QR („1 z 3”) zeskanujesz po kolei albo wczytasz ze zdjęć. Ostoja pokaże, których kodów brakuje, i pominie konta, które już ma.
-- **Microsoft Authenticator.** Microsoft nie pozwala eksportować kodów 2FA, więc Ostoja prowadzi krok po kroku przez przepięcie kont, z linkami do ustawień 2FA popularnych serwisów (Microsoft, Google, GitHub, Facebook, Instagram, Amazon, X, Dropbox). Hasła z Microsoft Authenticatora wczytasz z pliku CSV.
-- Aplikacja na Windows bez zmian funkcjonalnych.
+- **Nowe logo** - pierścień jak odliczanie kodu 2FA i dziurka od klucza. Nowa ikona aplikacji (także w wersji jednokolorowej do motywu ikon One UI), powiadomień, instalatora i rozszerzenia.
+- **Stabilność.** Usługi działające w tle (połączenie z komputerem, przypięty kod 2FA, widżety, autouzupełnianie) nie zamykają już aplikacji przy błędzie. Gdyby Ostoja jednak się zamknęła, przy następnym otwarciu pokaże szczegóły do skopiowania (Ustawienia → Dziennik błędów). Nic nie jest wysyłane samo.
+- **Autouzupełnianie bez zbędnego potwierdzenia.** Wybrane hasło wpisuje się od razu. Odcisk palca tylko wtedy, gdy masz włączoną blokadę i sejf był dawno nieużywany.
+- **Czytelne podpowiedzi haseł** w innych aplikacjach - własne tło i kolory w jasnym i ciemnym motywie.

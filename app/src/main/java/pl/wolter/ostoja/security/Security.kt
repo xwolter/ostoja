@@ -81,6 +81,13 @@ object AppLock {
 
     fun lockNow() { locked.value = true }
 
+    /** Sejf był odblokowany przed chwilą (w czasie automatycznej blokady) - autouzupełnianie nie pyta wtedy o odcisk. */
+    fun recentlyUnlocked(ctx: Context): Boolean {
+        if (locked.value) return false
+        if (backgroundAt == 0L) return true
+        return SystemClock.elapsedRealtime() - backgroundAt < ctx.app.settings.value.autoLockSec * 1000L
+    }
+
     fun prompt(
         activity: FragmentActivity,
         title: String = "Odblokuj Ostoję",

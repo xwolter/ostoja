@@ -18,6 +18,7 @@ class OstojaApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashLog.install(this)
         instance = this
         settings = SettingsStore(this)
         vault = Vault(this) { local -> Widgets.updateAll(this); if (local) Sync.localChanged() }
