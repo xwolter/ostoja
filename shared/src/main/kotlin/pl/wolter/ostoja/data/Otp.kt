@@ -175,6 +175,7 @@ object OtpUri {
             var shift = 0
             var r = 0L
             while (true) {
+                if (p >= end || shift > 63) throw ParseError("Uszkodzony kod migracji")
                 val x = b[p++].toInt() and 0xFF
                 r = r or ((x and 0x7F).toLong() shl shift)
                 if (x and 0x80 == 0) return r
@@ -182,17 +183,23 @@ object OtpUri {
             }
         }
         fun bytes(): ByteArray {
-            val n = varint().toInt()
+            val n = len(varint())
             return b.copyOfRange(p, p + n).also { p += n }
         }
+        // Najpierw odczyt długości, potem przesunięcie: `p += varint()` dodałoby długość do pozycji sprzed jej odczytu.
         fun skip(wire: Int) {
-            when (wire) {
-                0 -> varint()
-                1 -> p += 8
-                2 -> p += varint().toInt()
-                5 -> p += 4
+            val n = when (wire) {
+                0 -> { varint(); 0 }
+                1 -> len(8)
+                2 -> len(varint())
+                5 -> len(4)
                 else -> throw ParseError("Uszkodzony kod migracji")
             }
+            p += n
+        }
+        private fun len(n: Long): Int {
+            if (n < 0 || n > end - p) throw ParseError("Uszkodzony kod migracji")
+            return n.toInt()
         }
     }
 
@@ -219,14 +226,15 @@ object OtpUri {
                 var counter = 0L
                 while (m.more()) {
                     val t = m.varint().toInt()
-                    when (t shr 3) {
-                        1 -> secret = m.bytes()
-                        2 -> name = String(m.bytes())
-                        3 -> issuer = String(m.bytes())
-                        4 -> alg = m.varint().toInt()
-                        5 -> digits = m.varint().toInt()
-                        6 -> type = m.varint().toInt()
-                        7 -> counter = m.varint()
+                    // Numer pola razem z typem - pole o znanym numerze, ale innym typie jest pomijane.
+                    when (t) {
+                        1 shl 3 or 2 -> secret = m.bytes()
+                        2 shl 3 or 2 -> name = String(m.bytes(), Charsets.UTF_8)
+                        3 shl 3 or 2 -> issuer = String(m.bytes(), Charsets.UTF_8)
+                        4 shl 3 -> alg = m.varint().toInt()
+                        5 shl 3 -> digits = m.varint().toInt()
+                        6 shl 3 -> type = m.varint().toInt()
+                        7 shl 3 -> counter = m.varint()
                         else -> m.skip(t and 7)
                     }
                 }

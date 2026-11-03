@@ -120,6 +120,18 @@ class OtpTest {
         assertEquals(777L, m.id)
         assertEquals("Discord", m.accounts.single().issuer)
         assertEquals(null, OtpUri.migration("otpauth://totp/X?secret=JBSWY3DPEHPK3PXP"))
+
+        // Nowsze wersje Google Authenticator dopisują pola, których nie znamy - trzeba je pominąć, nie zgubić pozycji.
+        val extra = field(1, otp("abcdefghij".toByteArray(), "Zażółć", "Łódź", 2) + field(8, ByteArray(200) { 7 }) + fieldInt(9, 300)) +
+            field(1, otp("klmnopqrst".toByteArray(), "dave", "Steam", 2)) + field(6, ByteArray(150)) + fieldInt(2, 1)
+        val both = OtpUri.parse("otpauth-migration://offline?data=" + URLEncoder.encode(java.util.Base64.getEncoder().encodeToString(extra), "UTF-8"))
+        assertEquals(listOf("Łódź", "Steam"), both.map { it.issuer })
+        assertEquals("Zażółć", both[0].label)
+
+        // Ucięte dane: czytelny komunikat zamiast błędu indeksu.
+        val cut = java.util.Base64.getEncoder().encodeToString(extra.copyOfRange(0, 40))
+        val err = runCatching { OtpUri.parse("otpauth-migration://offline?data=" + URLEncoder.encode(cut, "UTF-8")) }.exceptionOrNull()
+        assertEquals("Uszkodzony kod migracji", err?.message)
     }
 }
 

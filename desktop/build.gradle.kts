@@ -31,7 +31,7 @@ compose.desktop {
             packageName = "Ostoja"
             // Każde nowe wydanie musi mieć wyższy numer - inaczej instalator nie zaktualizuje zainstalowanej wersji
             // (ten sam numer = ten sam ProductCode w MSI). upgradeUuid zostaje na zawsze ten sam.
-            packageVersion = "1.3.0"
+            packageVersion = "1.3.1"
             description = "Ostoja - password vault and 2FA codes synced with your phone" // ASCII: WiX (MSI) nie przyjmuje polskich znaków w stronie kodowej en-us
             vendor = "xwolter"
             modules("jdk.httpserver", "java.naming", "jdk.crypto.ec", "jdk.unsupported")
